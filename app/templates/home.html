@@ -1,0 +1,208 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Women Safety | Home</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            min-height: 100vh;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.75);
+            padding: 10px 30px;
+        }
+
+        .logo {
+            color: #ff4081;
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .menu a {
+            color: white;
+            text-decoration: none;
+            margin: 0 12px;
+            font-size: 15px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .menu a:hover {
+            background: #ff4081;
+            transform: scale(1.05);
+        }
+
+        /* ===== HERO TITLE ===== */
+        h1 {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            font-size: 42px;
+            letter-spacing: 3px;
+            animation: fadeDown 1.2s ease;
+        }
+
+        /* ===== QUOTE CARD ===== */
+        .quote-box {
+            max-width: 750px;
+            margin: 50px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            animation: fadeUp 1.4s ease;
+            text-align: center;
+        }
+
+        .quote-box h2 {
+            color: #333;
+            line-height: 1.9;
+            font-weight: normal;
+        }
+
+        /* ===== FEATURES ===== */
+        .features {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin: 60px auto;
+            width: 90%;
+        }
+
+        .card {
+            background: white;
+            width: 260px;
+            padding: 25px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card h3 {
+            color: #e91e63;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #555;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="logo">Women Safety</div>
+        <div class="menu">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'register' %}">Register</a>
+            <a href="{% url 'login' %}">Login</a>          
+            <a href="{% url 'about' %}">About</a>
+            <a href="{% url 'table' %}">Users</a>
+            <a href="{% url 'emergency' %}">Emergency</a>
+            <a href="{% url 'chatbot' %}">Safety Chatbot</a>
+            <a href="{% url 'admin_login' %}">Admin Login</a>
+
+        </div>
+    </div>
+
+    <!-- TITLE -->
+    <h1>WOMEN SAFETY</h1>
+
+    <!-- QUOTE -->
+    <div class="quote-box">
+        <h2>
+            “Every woman deserves to feel safe, respected, and protected.<br>
+            Your safety is your right, not a privilege.<br>
+            <b>Stay alert • Stay strong • Stay safe</b><br>
+            One action can make a big difference.<br>
+            Together, we create a safer world for women.”
+        </h2>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="features">
+        <div class="card">
+            <h3>🚨 SOS Alert</h3>
+            <p>
+                Instantly send emergency alerts to trusted contacts
+                during dangerous situations.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>📍 Live Location</h3>
+            <p>
+                Share real-time location with family and emergency services.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>📞 Emergency Contacts</h3>
+            <p>
+                Quick access to police, women helpline and trusted numbers.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>🔐 Secure Login</h3>
+            <p>
+                User authentication ensures data privacy and security.
+            </p>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: rgb(237, 42, 107);
+        }
+
+        .register-box {
+            background: #ffffff;
+            padding: 30px 40px;
+            width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .register-box h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .register-box label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .register-box input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            margin-bottom: 18px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .register-box button {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .register-box button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="register-box">
+        <h1>Registration Form</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label>Name</label>
+            <input type="text" name="name" placeholder="Enter the name">
+
+            <label>Phone Number</label>
+            <input type="number" name="no" placeholder="Enter the number">
+
+            <label>Email</label>
+            <input type="email" name="email" placeholder="Enter the email">
+
+            <label>Password</label>
+            <input type="password" name="pwd" placeholder="Enter the password">
+
+            <label>Date</label>
+            <input type="date" name="date" value="{{ data.dt|date:'Y-m-d' }}">
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+</body>
+</html>

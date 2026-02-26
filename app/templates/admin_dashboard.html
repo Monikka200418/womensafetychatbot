@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2>Welcome Admin</h2>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info mt-2">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="d-flex flex-wrap gap-2 mt-3">
+        <a href="{% url 'emergency_table' %}" class="btn btn-danger">View Emergency Messages</a>
+        <a href="{% url 'incident_timeline' %}" class="btn btn-primary">Incident Timeline</a>
+        <a href="{% url 'audit_logs' %}" class="btn btn-secondary">Audit Logs</a>
+    </div>
+
+    <form method="post" action="{% url 'run_cleanup_now' %}" class="mt-4 d-flex gap-2 align-items-center">
+        {% csrf_token %}
+        <label for="days" class="mb-0">Cleanup older than days:</label>
+        <input id="days" type="number" name="days" class="form-control" value="30" min="1" style="max-width:120px;">
+        <button type="submit" class="btn btn-warning">Run Cleanup</button>
+    </form>
+</div>
+
+<div class="modal fade" id="alertModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-danger">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Emergency Alert</h5>
+      </div>
+      <div class="modal-body text-center">
+        <h4>You have {{ new_alerts }} new emergency messages!</h4>
+      </div>
+      <div class="modal-footer">
+        <a href="{% url 'emergency_table' %}" class="btn btn-danger">View Now</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let alerts = parseInt("{{ new_alerts|default:'0' }}");
+    if (alerts > 0) {
+        let modal = new bootstrap.Modal(document.getElementById('alertModal'));
+        modal.show();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: rgb(112, 193, 237);
+        }
+
+        .login-box {
+            background: #ffffff;
+            padding: 30px 40px;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .login-box h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .login-box label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            margin-bottom: 18px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .login-box button:hover {
+            background-color: #1976D2;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-box">
+        <h1>Login</h1>
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color:#d32f2f;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label>Name</label>
+            <input type="text" name="name" value="{{ name|default:'' }}" placeholder="Enter your name" {% if otp_required %}readonly{% endif %}>
+
+            {% if otp_required %}
+                <label>OTP</label>
+                <input type="text" name="otp" placeholder="Enter 6-digit OTP">
+            {% else %}
+                <label>Password</label>
+                <input type="password" name="pwd" placeholder="Enter your password">
+            {% endif %}
+
+            <button type="submit">{% if otp_required %}Verify OTP{% else %}Login{% endif %}</button>
+        </form>
+    </div>
+
+</body>
+</html>

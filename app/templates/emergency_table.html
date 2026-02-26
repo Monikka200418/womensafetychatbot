@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Alerts</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 20px; background: #f8f8f8; }
+        h2 { color: #c2185b; }
+        .panel { background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+        .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        input, select, button { padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+        button { cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; background: #fff; margin-top: 12px; }
+        th, td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+        th { background: #ffe3ef; text-align: left; }
+        .delete-btn { border: none; background: #d32f2f; color: #fff; border-radius: 6px; padding: 6px 10px; cursor: pointer; font-weight: 600; }
+        .small { font-size: 12px; color: #555; }
+        audio, video { width: 220px; }
+    </style>
+</head>
+<body>
+    <h2>Emergency Alerts Admin Panel</h2>
+    <div class="panel">
+        <form method="get" class="row">
+            <input type="text" name="a_q" placeholder="Search alerts" value="{{ request.GET.a_q }}">
+            <select name="a_status">
+                <option value="">Alert status</option>
+                <option value="new" {% if request.GET.a_status == 'new' %}selected{% endif %}>new</option>
+                <option value="in_progress" {% if request.GET.a_status == 'in_progress' %}selected{% endif %}>in_progress</option>
+                <option value="resolved" {% if request.GET.a_status == 'resolved' %}selected{% endif %}>resolved</option>
+            </select>
+            <input type="date" name="from" value="{{ request.GET.from }}">
+            <input type="date" name="to" value="{{ request.GET.to }}">
+            <button type="submit">Apply Filters</button>
+            <a href="?export=csv_alerts"><button type="button">Export Alerts CSV</button></a>
+            <a href="?export=pdf"><button type="button">Export PDF</button></a>
+        </form>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="panel row">
+            <select name="bulk_action">
+                <option value="">Bulk action</option>
+                <option value="in_progress">Mark In Progress</option>
+                <option value="resolved">Mark Resolved</option>
+                <option value="delete">Delete Selected</option>
+            </select>
+            <button type="submit">Apply</button>
+            <span class="small">Select rows from both tables below.</span>
+        </div>
+
+        <table>
+            <tr>
+                <th>Select</th><th>Name</th><th>Phone</th><th>Contacts</th><th>Location</th><th>Message</th><th>Status</th><th>Hash</th><th>Audio</th><th>Date</th><th>Action</th>
+            </tr>
+            {% for e in alerts %}
+            <tr>
+                <td><input type="checkbox" name="selected_alerts" value="{{ e.id }}"></td>
+                <td>{{ e.name }}</td>
+                <td>{{ e.phone }}</td>
+                <td>{{ e.contacts_text|default:"-" }}</td>
+                <td>{{ e.location }}</td>
+                <td>{{ e.message }}</td>
+                <td>{{ e.status }}</td>
+                <td class="small">{{ e.evidence_hash|default:"-" }}</td>
+                <td>
+                    {% if e.audio_file %}
+                        <audio controls src="{{ e.audio_file.url }}"></audio><br>
+                        <a href="{{ e.audio_file.url }}" download>Download audio</a>
+                    {% else %}No audio{% endif %}
+                </td>
+                <td>{{ e.created_at }}</td>
+                <td>
+                    <form method="post" action="{% url 'delete_emergency_alert' e.id %}" onsubmit="return confirm('Delete this emergency alert?');">
+                        {% csrf_token %}
+                        <button class="delete-btn" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h2 style="margin-top: 28px;">Chatbot Share Logs</h2>
+        <div class="panel">
+            <form method="get" class="row">
+                <input type="text" name="c_q" placeholder="Search chatbot logs" value="{{ request.GET.c_q }}">
+                <select name="c_status">
+                    <option value="">Log status</option>
+                    <option value="new" {% if request.GET.c_status == 'new' %}selected{% endif %}>new</option>
+                    <option value="in_progress" {% if request.GET.c_status == 'in_progress' %}selected{% endif %}>in_progress</option>
+                    <option value="resolved" {% if request.GET.c_status == 'resolved' %}selected{% endif %}>resolved</option>
+                </select>
+                <select name="c_type">
+                    <option value="">Type</option>
+                    <option value="text" {% if request.GET.c_type == 'text' %}selected{% endif %}>text</option>
+                    <option value="audio" {% if request.GET.c_type == 'audio' %}selected{% endif %}>audio</option>
+                    <option value="video" {% if request.GET.c_type == 'video' %}selected{% endif %}>video</option>
+                </select>
+                <button type="submit">Apply Filters</button>
+                <a href="?export=csv_chatbot"><button type="button">Export Logs CSV</button></a>
+            </form>
+        </div>
+
+        <table>
+            <tr>
+                <th>Select</th><th>Sender</th><th>Recipients</th><th>Type</th><th>Location</th><th>Message</th><th>Status</th><th>Hash</th><th>Audio</th><th>Video</th><th>Date</th><th>Action</th>
+            </tr>
+            {% for c in chatbot_logs %}
+            <tr>
+                <td><input type="checkbox" name="selected_logs" value="{{ c.id }}"></td>
+                <td>{{ c.sender_name }}</td>
+                <td>{{ c.recipients|default:"-" }}</td>
+                <td>{{ c.share_type }}</td>
+                <td>{{ c.location|default:"-" }}</td>
+                <td>{{ c.message|default:"-" }}</td>
+                <td>{{ c.status }}</td>
+                <td class="small">{{ c.evidence_hash|default:"-" }}</td>
+                <td>{% if c.audio_file %}<audio controls src="{{ c.audio_file.url }}"></audio><br><a href="{{ c.audio_file.url }}" download>Download audio</a>{% else %}-{% endif %}</td>
+                <td>{% if c.video_file %}<video controls src="{{ c.video_file.url }}"></video><br><a href="{{ c.video_file.url }}" download>Download video</a>{% else %}-{% endif %}</td>
+                <td>{{ c.created_at }}</td>
+                <td>
+                    <form method="post" action="{% url 'delete_chatbot_log' c.id %}" onsubmit="return confirm('Delete this chatbot log?');">
+                        {% csrf_token %}
+                        <button class="delete-btn" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="12">No chatbot share logs yet.</td></tr>
+            {% endfor %}
+        </table>
+    </form>
+</body>
+</html>

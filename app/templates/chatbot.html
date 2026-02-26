@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Safety Chatbot</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            min-height: 100vh;
+            padding: 20px;
+            color: #2e2e2e;
+        }
+
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #d81b60;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        .tools {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f2d8e4;
+            background: #fff8fb;
+        }
+
+        .tools h2 {
+            margin: 0 0 10px;
+            color: #b2144f;
+            font-size: 18px;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .card {
+            border: 1px solid #f2ccdc;
+            border-radius: 12px;
+            padding: 12px;
+            background: #fff;
+        }
+
+        .card h3 {
+            margin: 0 0 8px;
+            font-size: 15px;
+            color: #4b4b4b;
+        }
+
+        .card input {
+            width: 100%;
+            margin-bottom: 8px;
+            box-sizing: border-box;
+            border: 1px solid #d7d7d7;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 8px;
+            padding: 8px 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            margin: 2px 4px 2px 0;
+        }
+
+        .btn-primary {
+            background: #d81b60;
+            color: #fff;
+        }
+
+        .btn-muted {
+            background: #efefef;
+            color: #333;
+        }
+
+        .status {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #555;
+            white-space: pre-line;
+        }
+
+        .row-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 14px 20px;
+            background: #fff8fb;
+            border-bottom: 1px solid #f4d3e2;
+        }
+
+        .chip {
+            border: 1px solid #f8a6c5;
+            background: #fff;
+            color: #c2185b;
+            border-radius: 999px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .chat-area {
+            max-height: 380px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #fff;
+        }
+
+        .msg {
+            margin-bottom: 14px;
+            white-space: pre-line;
+            line-height: 1.5;
+            padding: 12px 14px;
+            border-radius: 12px;
+            max-width: 85%;
+        }
+
+        .user {
+            background: #ffe0ec;
+            margin-left: auto;
+        }
+
+        .bot {
+            background: #f7f7f7;
+            margin-right: auto;
+            border: 1px solid #ececec;
+        }
+
+        .composer {
+            display: flex;
+            gap: 10px;
+            padding: 16px 20px 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .composer input {
+            flex: 1;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        .composer button {
+            border: 0;
+            border-radius: 10px;
+            padding: 12px 18px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .send {
+            background: #d81b60;
+            color: #fff;
+        }
+
+        .clear {
+            background: #eee;
+            color: #333;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            padding: 12px 16px;
+        }
+
+        .footer {
+            padding: 0 20px 20px;
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Offline Women Safety Chatbot</h1>
+            <p>Works without internet. Ask for SOS, helplines, legal rights, travel safety, harassment support.</p>
+        </div>
+
+        <div class="tools">
+            <h2>Safety Tools</h2>
+            <div class="tool-grid">
+                <div class="card">
+                    <h3>Trusted Family Contacts</h3>
+                    <input id="contact1" type="text" placeholder="Contact 1 phone">
+                    <input id="contact2" type="text" placeholder="Contact 2 phone">
+                    <input id="contact3" type="text" placeholder="Contact 3 phone">
+                    <button class="btn btn-primary" type="button" onclick="saveContacts()">Save Contacts</button>
+                    <div class="row-actions">
+                        <button class="btn btn-muted" type="button" onclick="sendSOSByContact(0)">Send C1</button>
+                        <button class="btn btn-muted" type="button" onclick="sendSOSByContact(1)">Send C2</button>
+                        <button class="btn btn-muted" type="button" onclick="sendSOSByContact(2)">Send C3</button>
+                        <button class="btn btn-primary" type="button" onclick="sendSOSToAll()">Send All</button>
+                    </div>
+                    <div id="contactsStatus" class="status"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Live Location Share</h3>
+                    <button class="btn btn-primary" type="button" onclick="getLiveLocation()">Get Live Location</button>
+                    <button class="btn btn-primary" type="button" onclick="startLiveTracking()">Start Tracking</button>
+                    <button class="btn btn-muted" type="button" onclick="stopLiveTracking()">Stop Tracking</button>
+                    <button class="btn btn-muted" type="button" onclick="shareSOSUpdate()">Share SOS Update</button>
+                    <button class="btn btn-muted" type="button" onclick="copySOSUpdate()">Copy</button>
+                    <div id="locationStatus" class="status">Location not captured yet.</div>
+                </div>
+
+                <div class="card">
+                    <h3>Auto Recording</h3>
+                    <button class="btn btn-primary" type="button" onclick="startAutoRecording()">Start Auto Recording</button>
+                    <button class="btn btn-muted" type="button" onclick="stopAutoRecording()">Stop</button>
+                    <button class="btn btn-primary" type="button" onclick="panicMode()">Panic Mode</button>
+                    <div class="row-actions">
+                        <button class="btn btn-primary" type="button" onclick="panicVideoMode()">Panic Video + Location</button>
+                    </div>
+                    <div id="recordStatus" class="status">Recording not started.</div>
+                    <div id="recordingActions" class="status"></div>
+                    <div id="videoStatus" class="status">Video recording not started.</div>
+                    <div id="videoActions" class="status"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <button class="chip" type="button" onclick="setPrompt('I need SOS help')">SOS help</button>
+            <button class="chip" type="button" onclick="setPrompt('Emergency helpline numbers')">Helplines</button>
+            <button class="chip" type="button" onclick="setPrompt('Safe travel tips at night')">Travel safety</button>
+            <button class="chip" type="button" onclick="setPrompt('What are my legal rights?')">Legal rights</button>
+            <button class="chip" type="button" onclick="setPrompt('I feel scared and anxious')">Calm down</button>
+        </div>
+
+        <div class="chat-area">
+            {% if history %}
+                {% for item in history %}
+                    <div class="msg user">{{ item.user }}</div>
+                    <div class="msg bot">{{ item.bot }}</div>
+                {% endfor %}
+            {% else %}
+                <div class="msg bot">I am your offline safety assistant. Type your concern and I will guide you.</div>
+            {% endif %}
+        </div>
+
+        <form method="post" class="composer">
+            {% csrf_token %}
+            <input id="message" type="text" name="message" placeholder="Type your message..." required>
+            <button class="send" type="submit">Send</button>
+            <a class="clear" href="{% url 'chatbot' %}?clear=1">Clear</a>
+        </form>
+
+        <div class="footer">
+            Browser permissions for location and microphone are required for live tracking and recording.
+        </div>
+    </div>
+
+    <script>
+        let latestLocation = null;
+        let watchId = null;
+        let mediaRecorder = null;
+        let mediaStream = null;
+        let recordedChunks = [];
+        let latestAudioBlob = null;
+        let latestAudioUrl = null;
+        let latestAudioMime = 'audio/webm';
+        let autoStopTimer = null;
+        let videoRecorder = null;
+        let videoStream = null;
+        let videoChunks = [];
+        let latestVideoBlob = null;
+        let latestVideoUrl = null;
+        let videoAutoStopTimer = null;
+        let autoShareVideoAfterStop = false;
+        let panicPingTimer = null;
+        let locationPings = [];
+        const senderName = "{{ sender_name|escapejs }}";
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+
+        function setPrompt(text) {
+            document.getElementById('message').value = text;
+            document.getElementById('message').focus();
+        }
+
+        function getCurrentLocationText() {
+            if (!latestLocation) {
+                return '';
+            }
+            return `${latestLocation.lat},${latestLocation.lng}`;
+        }
+
+        async function persistChatbotShare(payload) {
+            try {
+                const data = new FormData();
+                data.append('sender_name', senderName || 'Anonymous');
+                data.append('share_type', payload.shareType || 'text');
+                data.append('message', payload.messageText || '');
+                data.append('location', getCurrentLocationText());
+                data.append('location_history', locationPings.join(' | '));
+                data.append('recipients', payload.recipientsText || '');
+                if (payload.audioBlob) {
+                    const audioExt = getAudioExt();
+                    data.append('audio_file', new File([payload.audioBlob], `safety-audio.${audioExt}`, { type: latestAudioMime || payload.audioBlob.type || 'audio/ogg' }));
+                }
+                if (payload.videoBlob) {
+                    data.append('video_file', new File([payload.videoBlob], 'safety-video.webm', { type: 'video/webm' }));
+                }
+                await fetch("{% url 'chatbot_share_log' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: data
+                });
+            } catch (e) {
+                // Silent fallback so user sharing flow is not blocked.
+            }
+        }
+
+        async function saveContacts() {
+            const contacts = [
+                document.getElementById('contact1').value.trim(),
+                document.getElementById('contact2').value.trim(),
+                document.getElementById('contact3').value.trim()
+            ].filter(Boolean);
+            localStorage.setItem('trusted_contacts', JSON.stringify(contacts));
+            try {
+                const body = new URLSearchParams();
+                body.append('user_name', senderName || 'Anonymous');
+                body.append('contacts', contacts.join(','));
+                await fetch("{% url 'trusted_contacts_save' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: body.toString()
+                });
+            } catch (e) {
+                // local storage fallback already done
+            }
+            document.getElementById('contactsStatus').textContent =
+                contacts.length ? `Saved ${contacts.length} trusted contacts.` : 'No contacts saved.';
+        }
+
+        function getSavedContacts() {
+            return JSON.parse(localStorage.getItem('trusted_contacts') || '[]');
+        }
+
+        async function loadContacts() {
+            let contacts = getSavedContacts();
+            try {
+                const resp = await fetch(`{% url 'trusted_contacts_load' %}?user_name=${encodeURIComponent(senderName || 'Anonymous')}`);
+                const data = await resp.json();
+                if (data.ok && Array.isArray(data.contacts) && data.contacts.length) {
+                    contacts = data.contacts;
+                    localStorage.setItem('trusted_contacts', JSON.stringify(contacts));
+                }
+            } catch (e) {
+                // local storage fallback
+            }
+            document.getElementById('contact1').value = contacts[0] || '';
+            document.getElementById('contact2').value = contacts[1] || '';
+            document.getElementById('contact3').value = contacts[2] || '';
+            document.getElementById('contactsStatus').textContent =
+                contacts.length ? `Loaded ${contacts.length} trusted contacts.` : 'Add at least one family contact.';
+        }
+
+        function sendSMS(contactNumber, text) {
+            if (!contactNumber) {
+                document.getElementById('contactsStatus').textContent = 'Contact number missing.';
+                return;
+            }
+            const safeNumber = String(contactNumber).replace(/\s+/g, '');
+            window.location.href = `sms:${safeNumber}?body=${encodeURIComponent(text)}`;
+        }
+
+        function normalizePhone(number) {
+            let digits = String(number || '').replace(/\D/g, '');
+            if (digits.length === 10) {
+                digits = `91${digits}`;
+            }
+            return digits;
+        }
+
+        function openWhatsApp(number, text) {
+            const waNumber = normalizePhone(number);
+            if (!waNumber) {
+                return;
+            }
+            const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(text)}`;
+            window.open(waUrl, '_blank');
+        }
+
+        function sendSOSByContact(index) {
+            saveContacts();
+            const contacts = getSavedContacts();
+            if (!contacts[index]) {
+                document.getElementById('contactsStatus').textContent = `Contact ${index + 1} not available.`;
+                return;
+            }
+            const text = buildSOSMessage();
+            openWhatsApp(contacts[index], text);
+            persistChatbotShare({
+                shareType: 'text',
+                recipientsText: contacts[index],
+                messageText: text
+            });
+            document.getElementById('contactsStatus').textContent = `Opening WhatsApp chat for Contact ${index + 1}.`;
+        }
+
+        function sendSOSToAll() {
+            saveContacts();
+            const contacts = getSavedContacts();
+            if (!contacts.length) {
+                document.getElementById('contactsStatus').textContent = 'Add at least one contact.';
+                return;
+            }
+            const text = buildSOSMessage();
+            contacts.forEach((contact, idx) => {
+                setTimeout(() => openWhatsApp(contact, text), idx * 250);
+            });
+            persistChatbotShare({
+                shareType: 'text',
+                recipientsText: contacts.join(','),
+                messageText: text
+            });
+            document.getElementById('contactsStatus').textContent =
+                `Opening WhatsApp chats for ${contacts.length} contacts.`;
+        }
+
+        function buildSOSMessage() {
+            const contacts = JSON.parse(localStorage.getItem('trusted_contacts') || '[]');
+            const contactText = contacts.length ? contacts.join(', ') : 'No saved contacts';
+            if (!latestLocation) {
+                return `SOS: I need help. Family contacts: ${contactText}.`;
+            }
+            const mapUrl = `https://maps.google.com/?q=${latestLocation.lat},${latestLocation.lng}`;
+            return `SOS: I need help now.\nLive location: ${mapUrl}\nAccuracy: ${latestLocation.accuracy}m\nTime: ${latestLocation.time}\nFamily contacts: ${contactText}`;
+        }
+
+        function getLiveLocation() {
+            if (!navigator.geolocation) {
+                document.getElementById('locationStatus').textContent = 'Geolocation not supported in this browser.';
+                return;
+            }
+            document.getElementById('locationStatus').textContent = 'Getting live location...';
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    latestLocation = {
+                        lat: pos.coords.latitude.toFixed(6),
+                        lng: pos.coords.longitude.toFixed(6),
+                        accuracy: Math.round(pos.coords.accuracy || 0),
+                        time: new Date().toLocaleString()
+                    };
+                    locationPings.push(`${latestLocation.time}:${latestLocation.lat},${latestLocation.lng}`);
+                    document.getElementById('locationStatus').textContent =
+                        `Lat: ${latestLocation.lat}, Lng: ${latestLocation.lng}\nAccuracy: ${latestLocation.accuracy}m\nUpdated: ${latestLocation.time}`;
+                },
+                (err) => {
+                    document.getElementById('locationStatus').textContent =
+                        `Location error: ${err.message}`;
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+            );
+        }
+
+        function startLiveTracking() {
+            if (!navigator.geolocation) {
+                document.getElementById('locationStatus').textContent = 'Geolocation not supported in this browser.';
+                return;
+            }
+            if (watchId !== null) {
+                document.getElementById('locationStatus').textContent += '\nLive tracking already running.';
+                return;
+            }
+            document.getElementById('locationStatus').textContent = 'Starting live tracking...';
+            watchId = navigator.geolocation.watchPosition(
+                (pos) => {
+                    latestLocation = {
+                        lat: pos.coords.latitude.toFixed(6),
+                        lng: pos.coords.longitude.toFixed(6),
+                        accuracy: Math.round(pos.coords.accuracy || 0),
+                        time: new Date().toLocaleString()
+                    };
+                    locationPings.push(`${latestLocation.time}:${latestLocation.lat},${latestLocation.lng}`);
+                    document.getElementById('locationStatus').textContent =
+                        `Live tracking ON\nLat: ${latestLocation.lat}, Lng: ${latestLocation.lng}\nAccuracy: ${latestLocation.accuracy}m\nUpdated: ${latestLocation.time}`;
+                },
+                (err) => {
+                    document.getElementById('locationStatus').textContent = `Tracking error: ${err.message}`;
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+            );
+        }
+
+        function stopLiveTracking() {
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+                document.getElementById('locationStatus').textContent += '\nLive tracking stopped.';
+            }
+        }
+
+        async function copySOSUpdate() {
+            const text = buildSOSMessage();
+            try {
+                await navigator.clipboard.writeText(text);
+                document.getElementById('locationStatus').textContent += '\nSOS text copied.';
+            } catch (e) {
+                document.getElementById('locationStatus').textContent += '\nCopy failed.';
+            }
+        }
+
+        async function shareSOSUpdate() {
+            const text = buildSOSMessage();
+            const contacts = getSavedContacts();
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Emergency SOS',
+                        text: text
+                    });
+                } catch (e) {
+                    // User may cancel share sheet.
+                }
+                persistChatbotShare({
+                    shareType: 'text',
+                    recipientsText: contacts.join(','),
+                    messageText: text
+                });
+                return;
+            }
+            await copySOSUpdate();
+            persistChatbotShare({
+                shareType: 'text',
+                recipientsText: contacts.join(','),
+                messageText: text
+            });
+            alert('Share API not available. SOS text copied. Paste it in SMS/WhatsApp to family members.');
+        }
+
+        async function startAutoRecording() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                document.getElementById('recordStatus').textContent = 'Audio recording not supported in this browser.';
+                return;
+            }
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                document.getElementById('recordStatus').textContent = 'Recording is already running.';
+                return;
+            }
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                recordedChunks = [];
+                const preferredAudioTypes = [
+                    'audio/ogg;codecs=opus',
+                    'audio/webm;codecs=opus',
+                    'audio/webm'
+                ];
+                let chosenAudioType = '';
+                preferredAudioTypes.forEach((t) => {
+                    if (!chosenAudioType && window.MediaRecorder && MediaRecorder.isTypeSupported(t)) {
+                        chosenAudioType = t;
+                    }
+                });
+                if (chosenAudioType) {
+                    mediaRecorder = new MediaRecorder(mediaStream, { mimeType: chosenAudioType });
+                    latestAudioMime = chosenAudioType;
+                } else {
+                    mediaRecorder = new MediaRecorder(mediaStream);
+                    latestAudioMime = mediaRecorder.mimeType || 'audio/webm';
+                }
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data && event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+                mediaRecorder.onstop = () => {
+                    latestAudioBlob = new Blob(recordedChunks, { type: latestAudioMime });
+                    renderRecordingActions();
+                    if (mediaStream) {
+                        mediaStream.getTracks().forEach((track) => track.stop());
+                        mediaStream = null;
+                    }
+                };
+                mediaRecorder.start();
+                document.getElementById('recordStatus').textContent = 'Recording started. Auto-stop in 30 seconds.';
+                autoStopTimer = setTimeout(() => stopAutoRecording(), 30000);
+            } catch (e) {
+                document.getElementById('recordStatus').textContent = `Recording error: ${e.message}`;
+            }
+        }
+
+        function stopAutoRecording() {
+            if (autoStopTimer) {
+                clearTimeout(autoStopTimer);
+                autoStopTimer = null;
+            }
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                document.getElementById('recordStatus').textContent = 'Recording stopped.';
+            }
+        }
+
+        function renderRecordingActions() {
+            if (!latestAudioBlob) {
+                return;
+            }
+            if (latestAudioUrl) {
+                URL.revokeObjectURL(latestAudioUrl);
+            }
+            latestAudioUrl = URL.createObjectURL(latestAudioBlob);
+            const ext = getAudioExt();
+            document.getElementById('recordingActions').innerHTML =
+                `<audio controls src="${latestAudioUrl}"></audio>
+                <div class="row-actions">
+                    <a class="btn btn-muted" href="${latestAudioUrl}" download="safety-audio.${ext}">Download</a>
+                    <button class="btn btn-primary" type="button" onclick="shareAudio()">Send Audio</button>
+                </div>`;
+        }
+
+        async function shareAudio() {
+            if (!latestAudioBlob) {
+                document.getElementById('recordStatus').textContent = 'No audio to send.';
+                return;
+            }
+            const effectiveAudioType = (latestAudioMime || latestAudioBlob.type || '').toLowerCase();
+            if (!effectiveAudioType.startsWith('audio/')) {
+                document.getElementById('recordStatus').textContent = 'Current file is not audio. Record audio again.';
+                return;
+            }
+            const ext = getAudioExt();
+            const audioFile = new File([latestAudioBlob], `safety-audio.${ext}`, { type: latestAudioMime || latestAudioBlob.type || 'audio/ogg' });
+            const audioOnlyText = 'Emergency audio recording attached.';
+            const contacts = getSavedContacts();
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [audioFile] })) {
+                try {
+                    await navigator.share({
+                        title: 'Emergency Audio',
+                        text: audioOnlyText,
+                        files: [audioFile]
+                    });
+                } catch (e) {
+                    // ignore user cancel
+                }
+                persistChatbotShare({
+                    shareType: 'audio',
+                    recipientsText: contacts.join(','),
+                    messageText: audioOnlyText,
+                    audioBlob: latestAudioBlob
+                });
+                return;
+            }
+            downloadLatestAudio();
+            const audioCopied = await copyAudioToClipboard();
+            if (contacts.length) {
+                const msg = `I am sending emergency audio file now. Please check attached file: safety-audio.${ext}`;
+                contacts.forEach((contact, idx) => {
+                    setTimeout(() => openWhatsApp(contact, msg), idx * 250);
+                });
+            } else {
+                document.getElementById('contactsStatus').textContent =
+                    'No contacts saved. Save contacts first, then use Send Audio.';
+            }
+            persistChatbotShare({
+                shareType: 'audio',
+                recipientsText: contacts.join(','),
+                messageText: audioOnlyText,
+                audioBlob: latestAudioBlob
+            });
+            if (audioCopied) {
+                document.getElementById('recordStatus').textContent =
+                    'Direct file-share not supported. Audio downloaded and copied to clipboard. Open chat and press Ctrl+V to paste audio.';
+            } else {
+                document.getElementById('recordStatus').textContent =
+                    'Direct file-share not supported. Audio downloaded. Attach the downloaded file in opened chats.';
+            }
+        }
+
+        function downloadLatestAudio() {
+            if (!latestAudioBlob) {
+                return;
+            }
+            const url = URL.createObjectURL(latestAudioBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `safety-audio.${getAudioExt()}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function getAudioExt() {
+            const t = (latestAudioMime || latestAudioBlob?.type || '').toLowerCase();
+            if (t.includes('ogg')) return 'ogg';
+            if (t.includes('mp4') || t.includes('m4a')) return 'm4a';
+            return 'webm';
+        }
+
+        async function copyAudioToClipboard() {
+            try {
+                if (!window.ClipboardItem || !navigator.clipboard || !navigator.clipboard.write || !latestAudioBlob) {
+                    return false;
+                }
+                const blobType = latestAudioBlob.type || 'audio/webm';
+                const item = new ClipboardItem({ [blobType]: latestAudioBlob });
+                await navigator.clipboard.write([item]);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        async function panicMode() {
+            document.getElementById('recordStatus').textContent = 'Panic mode active: getting location + recording.';
+            locationPings = [];
+            getLiveLocation();
+            if (panicPingTimer) {
+                clearInterval(panicPingTimer);
+            }
+            panicPingTimer = setInterval(getLiveLocation, 10000);
+            await startAutoRecording();
+            setTimeout(async () => {
+                await shareSOSUpdate();
+                if (panicPingTimer) {
+                    clearInterval(panicPingTimer);
+                    panicPingTimer = null;
+                }
+            }, 3000);
+        }
+
+        async function panicVideoMode() {
+            document.getElementById('videoStatus').textContent = 'Panic video mode active: location + back camera recording.';
+            getLiveLocation();
+            autoShareVideoAfterStop = true;
+            await startBackCameraRecording();
+        }
+
+        async function startBackCameraRecording() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                document.getElementById('videoStatus').textContent = 'Video recording not supported in this browser.';
+                return;
+            }
+            if (videoRecorder && videoRecorder.state === 'recording') {
+                document.getElementById('videoStatus').textContent = 'Video recording is already running.';
+                return;
+            }
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: 'environment' } },
+                    audio: true
+                });
+                videoChunks = [];
+                videoRecorder = new MediaRecorder(videoStream);
+                videoRecorder.ondataavailable = (event) => {
+                    if (event.data && event.data.size > 0) {
+                        videoChunks.push(event.data);
+                    }
+                };
+                videoRecorder.onstop = async () => {
+                    latestVideoBlob = new Blob(videoChunks, { type: 'video/webm' });
+                    renderVideoActions();
+                    if (videoStream) {
+                        videoStream.getTracks().forEach((track) => track.stop());
+                        videoStream = null;
+                    }
+                    if (autoShareVideoAfterStop) {
+                        autoShareVideoAfterStop = false;
+                        await sendVideoWithLocation();
+                    }
+                };
+                videoRecorder.start();
+                document.getElementById('videoStatus').textContent = 'Back camera recording started. Auto-stop in 20 seconds.';
+                videoAutoStopTimer = setTimeout(() => stopBackCameraRecording(), 20000);
+            } catch (e) {
+                autoShareVideoAfterStop = false;
+                document.getElementById('videoStatus').textContent = `Video recording error: ${e.message}`;
+            }
+        }
+
+        function stopBackCameraRecording() {
+            if (videoAutoStopTimer) {
+                clearTimeout(videoAutoStopTimer);
+                videoAutoStopTimer = null;
+            }
+            if (videoRecorder && videoRecorder.state === 'recording') {
+                videoRecorder.stop();
+                document.getElementById('videoStatus').textContent = 'Video recording stopped.';
+            }
+        }
+
+        function renderVideoActions() {
+            if (!latestVideoBlob) {
+                return;
+            }
+            if (latestVideoUrl) {
+                URL.revokeObjectURL(latestVideoUrl);
+            }
+            latestVideoUrl = URL.createObjectURL(latestVideoBlob);
+            document.getElementById('videoActions').innerHTML =
+                `<video controls style="width:100%;max-height:180px;" src="${latestVideoUrl}"></video>
+                <div class="row-actions">
+                    <a class="btn btn-muted" href="${latestVideoUrl}" download="safety-video.webm">Download Video</a>
+                    <button class="btn btn-primary" type="button" onclick="sendVideoWithLocation()">Send Video</button>
+                </div>`;
+        }
+
+        function downloadLatestVideo() {
+            if (!latestVideoBlob) {
+                return;
+            }
+            const url = URL.createObjectURL(latestVideoBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'safety-video.webm';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        async function sendVideoWithLocation() {
+            if (!latestVideoBlob) {
+                document.getElementById('videoStatus').textContent = 'No video to send.';
+                return;
+            }
+            const videoFile = new File([latestVideoBlob], 'safety-video.webm', { type: 'video/webm' });
+            const text = `${buildSOSMessage()}\nEmergency video attached.`;
+            const contacts = getSavedContacts();
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [videoFile] })) {
+                try {
+                    await navigator.share({
+                        title: 'Emergency Video + Location',
+                        text: text,
+                        files: [videoFile]
+                    });
+                } catch (e) {
+                    // ignore cancel
+                }
+                persistChatbotShare({
+                    shareType: 'video',
+                    recipientsText: contacts.join(','),
+                    messageText: text,
+                    videoBlob: latestVideoBlob
+                });
+                return;
+            }
+            downloadLatestVideo();
+            if (!contacts.length) {
+                document.getElementById('contactsStatus').textContent =
+                    'No contacts saved. Save contacts first, then use Send Video.';
+                document.getElementById('videoStatus').textContent =
+                    'Video downloaded. Attach it manually in chat.';
+                persistChatbotShare({
+                    shareType: 'video',
+                    recipientsText: '',
+                    messageText: text,
+                    videoBlob: latestVideoBlob
+                });
+                return;
+            }
+            contacts.forEach((contact, idx) => {
+                setTimeout(() => openWhatsApp(contact, `${text}\nPlease check attached file: safety-video.webm`), idx * 250);
+            });
+            persistChatbotShare({
+                shareType: 'video',
+                recipientsText: contacts.join(','),
+                messageText: text,
+                videoBlob: latestVideoBlob
+            });
+            document.getElementById('videoStatus').textContent =
+                'Direct video share not supported here. Video downloaded and WhatsApp chats opened.';
+        }
+
+        loadContacts();
+        document.addEventListener('keydown', (event) => {
+            if (event.shiftKey && (event.key === 'S' || event.key === 's')) {
+                panicMode();
+            }
+        });
+    </script>
+</body>
+</html>

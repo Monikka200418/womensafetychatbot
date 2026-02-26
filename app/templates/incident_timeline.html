@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident Timeline</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 20px; background: #f7f7f7; }
+        h2 { color: #c2185b; }
+        .item { background: #fff; border-left: 4px solid #c2185b; padding: 12px; margin-bottom: 10px; border-radius: 8px; }
+        .meta { color: #666; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <h2>Incident Timeline</h2>
+    {% for e in events %}
+        <div class="item">
+            <strong>{{ e.event_type }}</strong> - {{ e.title }}
+            <div>{{ e.details }}</div>
+            <div class="meta">{{ e.created_at }} | status: {{ e.status }}</div>
+        </div>
+    {% empty %}
+        <p>No events found.</p>
+    {% endfor %}
+</body>
+</html>

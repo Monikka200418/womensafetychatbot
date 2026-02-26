@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Logs</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 20px; background: #f7f7f7; }
+        h2 { color: #c2185b; }
+        table { width: 100%; border-collapse: collapse; background: #fff; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #ffe3ef; }
+    </style>
+</head>
+<body>
+    <h2>Admin Audit Logs</h2>
+    <table>
+        <tr>
+            <th>Admin</th><th>Action</th><th>Object</th><th>Object ID</th><th>Note</th><th>Date</th>
+        </tr>
+        {% for l in logs %}
+        <tr>
+            <td>{{ l.admin_username }}</td>
+            <td>{{ l.action }}</td>
+            <td>{{ l.object_type }}</td>
+            <td>{{ l.object_id }}</td>
+            <td>{{ l.note }}</td>
+            <td>{{ l.created_at }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">No audit logs.</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
